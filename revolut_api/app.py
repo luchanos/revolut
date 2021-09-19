@@ -79,7 +79,7 @@ def create_response(result, status_code=200, error=None):
         "result": {"errors": str(error), "payload": result},
         "status": status_code,
     }
-    return json(schema.dump(response_data))
+    return json(schema.dump(response_data), status=status_code)
 
 
 class JsonNestedMethod(HTTPMethodView):
@@ -105,7 +105,9 @@ def register_errors(app: Sanic):
 
 
 def create_app():
-    app = Sanic("revolut_application")
+    from uuid import uuid4
+
+    app = Sanic(f"revolut_application_{uuid4()}")
     app.add_route(JsonNestedMethod.as_view(), "/make_nested_json")
     register_errors(app)
     return app
