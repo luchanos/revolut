@@ -91,7 +91,7 @@ class JsonNestedMethod(HTTPMethodView):
         except ValidationError as err:
             err_msg = "Error due to validation of input data in request: %s" % (err, )
             logger.error(err_msg)
-            return create_response(result=[], status_code=401, error=err)
+            return create_response(result=[], status_code=422, error=err)
         result = await make_nested_json(data["json_data"], *data["keys_priority"])
         return create_response(result)
 
