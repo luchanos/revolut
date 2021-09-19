@@ -1,12 +1,14 @@
+import logging
+import sys
+
+from expiringdict import ExpiringDict
+from marshmallow import Schema, ValidationError, fields, validates
 from marshmallow.fields import Dict, Str
 from sanic import Sanic
 from sanic.exceptions import Unauthorized
 from sanic.response import json
 from sanic.views import HTTPMethodView
-from expiringdict import ExpiringDict
-from marshmallow import Schema, fields, ValidationError, validates
-import logging
-import sys
+
 
 logger = logging.getLogger(__name__)
 stdout_handler = logging.StreamHandler(sys.stdout)
@@ -20,15 +22,16 @@ cache = ExpiringDict(max_len=1000, max_age_seconds=3600)
 
 def check_auth(f):
     def inner(request, *args, **kwargs):
-        token = request.headers.get('X-TOKEN')
+        token = request.headers.get("X-TOKEN")
         if token is None:
             logger.info("Attemption to use route without auth")
             raise Unauthorized("No token!")
         return f(request, *args, **kwargs)
+
     return inner
 
 
-async def make_nested_json(sample_input, *args):
+def make_nested_json(sample_input, *args):
     result = {}
     _len = len(args)
     keys = sample_input[0].keys()
@@ -76,7 +79,11 @@ class OutputSchema(Schema):
 def create_response(result, status_code=200, error=None):
     schema = OutputSchema()
     success = True if not error else False
-    response_data = {"success": success, "result": {"errors": str(error), "payload": result}, "status": status_code}
+    response_data = {
+        "success": success,
+        "result": {"errors": str(error), "payload": result},
+        "status": status_code,
+    }
     return json(schema.dump(response_data))
 
 
@@ -89,14 +96,14 @@ class JsonNestedMethod(HTTPMethodView):
         try:
             data = self.input_schema.load(request.json)
         except ValidationError as err:
-            err_msg = "Error due to validation of input data in request: %s" % (err, )
+            err_msg = "Error due to validation of input data in request: %s" % (err,)
             logger.error(err_msg)
             return create_response(result=[], status_code=422, error=err)
-        result = await make_nested_json(data["json_data"], *data["keys_priority"])
+        result = make_nested_json(data["json_data"], *data["keys_priority"])
         return create_response(result)
 
 
-app.add_route(JsonNestedMethod.as_view(), '/make_nested_json')
+app.add_route(JsonNestedMethod.as_view(), "/make_nested_json")
 
 
 if __name__ == "__main__":
