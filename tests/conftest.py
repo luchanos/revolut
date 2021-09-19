@@ -2,7 +2,7 @@ import pytest
 from sanic import response
 from sanic.websocket import WebSocketProtocol
 
-from revolut_api.app import create_app
+from app import create_app
 
 
 @pytest.yield_fixture

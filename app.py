@@ -1,6 +1,9 @@
+from sys import argv
+
 from sanic import Sanic
 from sanic.exceptions import Unauthorized
 from sanic.response import json
+
 
 from revolut_api.handlers.nested_json import NestedJsonHandler
 
@@ -22,4 +25,4 @@ def create_app():
 
 if __name__ == "__main__":
     app = create_app()
-    app.run()
+    app.run(host=argv[1], port=int(argv[2]))
