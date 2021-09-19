@@ -1,7 +1,6 @@
 import logging
 import sys
 
-from expiringdict import ExpiringDict
 from marshmallow import Schema, ValidationError, fields, validates
 from marshmallow.fields import Dict, Str
 from sanic import Sanic
@@ -14,10 +13,6 @@ logger = logging.getLogger(__name__)
 stdout_handler = logging.StreamHandler(sys.stdout)
 logger.addHandler(stdout_handler)
 logger.setLevel("DEBUG")
-
-
-app = Sanic("revolut_application")
-cache = ExpiringDict(max_len=1000, max_age_seconds=3600)
 
 
 def check_auth(f):
@@ -103,8 +98,19 @@ class JsonNestedMethod(HTTPMethodView):
         return create_response(result)
 
 
-app.add_route(JsonNestedMethod.as_view(), "/make_nested_json")
+def register_errors(app: Sanic):
+    @app.exception(Unauthorized)
+    def _(request, exception: Unauthorized):
+        return json({"success": False, "errors": [str(exception)]}, status=exception.status_code)
+
+
+def create_app():
+    app = Sanic("revolut_application")
+    app.add_route(JsonNestedMethod.as_view(), "/make_nested_json")
+    register_errors(app)
+    return app
 
 
 if __name__ == "__main__":
+    app = create_app()
     app.run()
