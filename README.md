@@ -1,5 +1,6 @@
 # Revolut
-REST-API application for nesting json
+REST-API application for nesting json. Sanic - async web-framework, but this task 
+cannot show async domination((
 
 ####Created by luchanos:
 
@@ -18,12 +19,17 @@ pip3 install -r requirements.txt
 
 ## running tests
 
-For running test first of all please set TEST_MODE = True in enviroment
+- For running test first of all please set TEST_MODE = True in enviroment
 variables (you can use you IDE configurations or create your own local test settings file)
 
 ## linters
 
-If you modify the codebase of this app, please make command 'make linters' in your terminal for running linters.
+- If you modify the codebase of this app, please make command
+  
+```make linters```
+
+in your terminal for running linters.
+
 Behavior of the linters you can set in isort, flake8, pyproject and Makefile files.
 
 ## endpoints
@@ -103,20 +109,33 @@ curl --location --request POST 'http://<YOUR_SHINY_HOST>:<YOUR_SHINY_PORT>/make_
 
 ## auth
 
-For basic auth you must add 'X-TOKEN' header in your request. An example of token you can find in Dockerfile.
+- For basic auth you must add 'X-TOKEN' header in your request. An example of token you can find in Dockerfile.
 I set it there just to simplify, in real life service tokens is not recommended to keep in codebase - that's
 not securable. If someone got an access to your code it may be stolen.
 
 ## scripts
 
-Same task solver script you can find in 'scripts' folder with an example of flat json. For running via terminal use:
+- Same task solver script you can find in 'scripts' folder with an example of flat json. For running via terminal use:
 
 ```cat flat_json.json | python create_nested_json.py currency country city```
 
+- Just for fun I've created file to send test data to database in async mode by my own client.
+
 ## deployment
 
-You can create an image of your application by using Dockerfile. It's contains everything, what you need.
+- You can create an image of your application by using Dockerfile and then create some instances in containers. Dockerfile
+contains everything, what you need for that.
 
+- If you don't want to set up Docker container settings you can use docker-compose-local file - here you can find our app
+and Postgres (I've just wanna to create other endpoints for writing in database, but my time quota for free coding has
+been ended this weekend regretfully :D )
+  
+# migrations
+
+For run migrations you can use yoyo-migrations lib. All migrations you can find in 'migrations' folder.
+Applying for container db from local compose file:
+
+```yoyo apply --database postgresql://postgres:dbpass@localhost:5432/postgres```
 
 # P.S. 
 THIS APP HAD BEEN DEPLOYED IN THE WEB!!! :)
