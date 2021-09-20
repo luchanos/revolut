@@ -1,8 +1,10 @@
 import asyncio
-import asyncpg
 import logging
 import sys
 from datetime import datetime
+
+import asyncpg
+
 
 logger = logging.getLogger(__name__)
 stdout_handler = logging.StreamHandler(sys.stdout)
@@ -31,14 +33,20 @@ class MyAsyncDbClient:
     async def insert_new_transaction(self, date: str, user_id: int, currency: str, value: float):
         """Create new transaction"""
         self._check_connection()
-        await self.db_pool.execute(self.TRANSACTION_INSERT_QUERY, datetime.strptime(date, "%Y-%m-%d %H:%M:%S"),
-                                   user_id, currency, value)
+        await self.db_pool.execute(
+            self.TRANSACTION_INSERT_QUERY, datetime.strptime(date, "%Y-%m-%d %H:%M:%S"), user_id, currency, value
+        )
 
     async def insert_new_exchange_rate(self, date: str, currency_1: str, currency_2: str, rate: float):
         """Create new exchange rate"""
         self._check_connection()
-        await self.db_pool.execute(self.EXCHANGE_RATES_INSERT_QUERY, datetime.strptime(date, "%Y-%m-%d %H:%M:%S"),
-                                   currency_1, currency_2, rate)
+        await self.db_pool.execute(
+            self.EXCHANGE_RATES_INSERT_QUERY,
+            datetime.strptime(date, "%Y-%m-%d %H:%M:%S"),
+            currency_1,
+            currency_2,
+            rate,
+        )
 
     async def close(self):
         await self.db_pool.close()
@@ -89,6 +97,7 @@ async def insert_test_data_to_db():
     tasks_ex = [my_shiny_db_client.insert_new_exchange_rate(*ex_info) for ex_info in exchange_rates_test_data]
     all_tasks = tasks_tr + tasks_ex
     await asyncio.gather(*all_tasks)
+
 
 if __name__ == "__main__":
     loop = asyncio.get_event_loop()
