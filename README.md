@@ -140,6 +140,6 @@ Applying for container db from local compose file:
 # P.S. 
 THIS APP HAD BEEN DEPLOYED IN THE WEB!!! :)
 So, you can check its functionality by sending some curl to http://84.201.128.178:3000/make_nested_json with 
-token from Dockerfile.
+token from Dockerfile (a1f64cd8-69b9-493c-8587-7afc041efabe)
 
 Thanks for attention!
