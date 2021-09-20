@@ -99,13 +99,19 @@ curl --location --request POST 'http://<YOUR_SHINY_HOST>:<YOUR_SHINY_PORT>/make_
   }
 ],
 "keys_priority": ["country", "city"]
-}'
+}'```
 
 ## auth
 
 For basic auth you must add 'X-TOKEN' header in your request. An example of token you can find in Dockerfile.
 I set it there just to simplify, in real life service tokens is not recommended to keep in codebase - that's
 not securable. If someone got an access to your code it may be stolen.
+
+## scripts
+
+Same task solver script you can find in 'scripts' folder with an example of flat json. For running via terminal use:
+
+```cat flat_json.json | python create_nested_json.py currency country city```
 
 ## deployment
 
