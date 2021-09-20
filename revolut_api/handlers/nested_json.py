@@ -4,9 +4,9 @@ import sys
 from marshmallow import ValidationError
 from sanic.views import HTTPMethodView
 
+from revolut_api.decorators import check_auth
 from revolut_api.methods.response_funcs import create_response
 from revolut_api.schemas.base import OutputSchema
-from revolut_api.schemas.decorators import check_auth
 from revolut_api.schemas.nested_json_schemas import JsonNestedRequestSchema
 
 
