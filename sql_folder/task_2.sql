@@ -1,18 +1,18 @@
-WITH input AS (
-    SELECT ts, user_id, currency, amount, NULL AS to_currency, NULL as rate
-    from transactions
-    union all
-    select ts, null as user_id, from_currency as currency, null as amount, to_currency, rate
-    from exchange_rates
-    where to_currency = 'GBP'
+WITH s_input AS (
+    SELECT ts, user_id, currency, amount, NULL AS to_currency, NULL AS rate
+    FROM transactions
+    UNION ALL
+    SELECT ts, NULL AS user_id, from_currency AS currency, NULL AS amount, to_currency, rate
+    FROM exchange_rates
+    WHERE to_currency = 'GBP'
 )
-select user_id, sum(amount * coalesce(last_rate, 1))
-from (
-    select user_id, amount, first_value(rate) over (partition by currency, group_number) as last_rate
-    from (
-             select user_id, amount, rate, currency, sum(case when rate is not null then 1 end) OVER (partition by currency order by ts) as group_number
-             from input
-         ) as grouped
-    ) as t
-where user_id is not null
-group by user_id;
+SELECT user_id, SUM(amount * COALESCE(last_rate, 1))
+FROM (
+    SELECT user_id, amount, first_value(rate) over (partition BY currency, group_number) AS last_rate
+    FROM (
+             SELECT user_id, amount, rate, currency, SUM(CASE WHEN rate IS NOT NULL THEN 1 END) OVER (partition BY currency ORDER BY ts) AS group_number
+             FROM s_input
+         ) AS grouped
+    ) AS t
+WHERE user_id IS NOT NULL
+GRUOP BY user_id;
