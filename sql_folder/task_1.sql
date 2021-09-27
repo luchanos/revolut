@@ -1,4 +1,4 @@
-SELECT sum(amount / orig_rate) AS exchanged_total_result, user_id
+SELECT sum(amount * orig_rate) AS exchanged_total_result, user_id
 FROM (
 
 SELECT
