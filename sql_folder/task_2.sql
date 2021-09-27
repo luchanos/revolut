@@ -15,4 +15,4 @@ FROM (
          ) AS grouped
     ) AS t
 WHERE user_id IS NOT NULL
-GRUOP BY user_id;
+GROUP BY user_id;
